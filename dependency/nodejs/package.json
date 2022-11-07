@@ -1,0 +1,23 @@
+{
+  "name": "utilsliberary",
+  "version": "1.0.0",
+  "description": "This is common code for lambda",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "abhishek",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1247.0",
+    "axios": "^1.1.3",
+    "body-parser": "^1.20.1",
+    "chai": "^4.3.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "got": "^12.5.2",
+    "mocha": "^10.1.0",
+    "mysql": "^2.18.1",
+    "uuid": "^9.0.0"
+  }
+}

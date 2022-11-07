@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'AbhishekS_SAM1
+
+  Sample SAM Template for AbhishekS_SAM1
+
+  '
+Globals:
+  Function:
+    Timeout: 70
+    Tracing: Active
+    Runtime: nodejs16.x
+    Layers:
+    - Ref: UtilsLibrary
+    Architectures:
+    - x86_64
+    Tags:
+      Owner: AbhishekS
+      Group: A111
+  Api:
+    TracingEnabled: true
+Resources:
+  GetLambdaFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetLambdaFunctions
+      Handler: getData.lambdaHandler
+      Description: This is get details lambda function of GroupA111
+      FunctionName: AbhishekS_GetDetail
+      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+    Metadata:
+      SamResourceId: GetLambdaFunctions
+  PostLambdaFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PostLambdaFunctions
+      Handler: postData.lambdaHandler
+      Description: This is Post details lambda function of GroupA111
+      FunctionName: AbhishekS_PostDetails
+      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: post
+    Metadata:
+      SamResourceId: PostLambdaFunctions
+  UtilsLibrary:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: GroupA111UtilsLibrary
+      Description: This is common code for Group A111 project
+      ContentUri: ..\..\dependency
+      CompatibleRuntimes:
+      - nodejs6.10
+      - nodejs8.10
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+  GroupA111SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: GroupA111SNSTopic
+      FifoTopic: false
+      TopicName: AbhishekS-GroupA111
+      Tags:
+      - Key: Owner
+        Value: AbhishekS
+      - Key: Group
+        Value: A111
+      Subscription:
+      - Endpoint: abhishek.r.singh@impetus.com
+        Protocol: Email
+Outputs:
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/

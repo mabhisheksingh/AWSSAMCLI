@@ -1,0 +1,23 @@
+{
+    "yaml.schemas": {
+        "aws:/c%3A/Users/abhishek.r.singh/AppData/Roaming/Code/User/globalStorage/amazonwebservices.aws-toolkit-vscode/sam.schema.json": "file:///c%3A/Users/abhishek.r.singh/OneDrive%20-%20Impetus/Personal/CPE-5/Project/AbhishekS_SAM1/template.yaml"
+    },
+    "cSpell.words": [
+        "Runtimes"
+    ],
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "database-2-instance-1.c0mmxfoygcyg.ap-south-1.rds.amazonaws.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "AuroraMYSQL",
+            "database": " ",
+            "username": "admin",
+            "password": "8s1MZaJdmPpmL4KjO3Fa"
+        }
+    ]
+}

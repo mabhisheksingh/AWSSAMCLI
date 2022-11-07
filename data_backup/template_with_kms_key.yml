@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AbhishekS_SAM1
+
+  Sample SAM Template for AbhishekS_SAM1
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 70
+    Tracing: Active
+    Runtime: nodejs16.x
+    Layers:
+      - !Ref UtilsLibrary
+    Architectures: 
+      - x86_64
+    VpcConfig:
+      SecurityGroupIds:
+        - sg-0e5f13f2db6f0da76
+      SubnetIds:
+        - subnet-0bcf8bb8cf7af7090
+        - subnet-0cbab46285473cf8c
+    Tags: 
+      Owner: "AbhishekS"
+      Group: "A111" 
+  Api:
+    TracingEnabled: True
+
+Resources:
+  GetLambdaFunctions:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Lambdas/GetLambda
+      Handler: getData.lambdaHandler
+      Description : "This is get details lambda function of GroupA111"
+      FunctionName: "AbhishekS_GetDetail"
+      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+  PostLambdaFunctions:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Lambdas/PostLambda
+      Handler: postData.lambdaHandler
+      Description : "This is Post details lambda function of GroupA111"
+      FunctionName: "AbhishekS_PostDetails"
+      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: post
+
+  #Lambda layer for common code
+  UtilsLibrary:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: GroupA111UtilsLibrary
+      Description: This is common code for Group A111 project
+      ContentUri: dependency
+      CompatibleRuntimes:
+              - nodejs6.10
+              - nodejs8.10
+      LicenseInfo: 'MIT'
+      RetentionPolicy: Retain
+
+  #SNS topic management
+  GroupA111SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties: 
+      DisplayName: "GroupA111SNSTopic"
+      FifoTopic: false
+      TopicName: "AbhishekS-GroupA111"
+      Tags: 
+        - Key: "Owner"
+          Value: "AbhishekS"
+        - Key: "Group"
+          Value: "A111"
+      Subscription:
+        - Endpoint: "abhishek.r.singh@impetus.com"
+          Protocol: "Email"
+
+  #KMS key management
+  GroupA11KMS:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: CEP-B5-GroupA111
+      EnableKeyRotation: true
+      PendingWindowInDays: 20
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::181191750685:root'
+            Action: 'kms:*'
+            Resource: '*'
+          - Sid: Allow administration of the key
+            Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::181191750685:user/AbhishekS'
+            Action:
+              - 'kms:Create*'
+              - 'kms:Describe*'
+              - 'kms:Enable*'
+              - 'kms:List*'
+              - 'kms:Put*'
+              - 'kms:Update*'
+              - 'kms:Revoke*'
+              - 'kms:Disable*'
+              - 'kms:Get*'
+              - 'kms:Delete*'
+              - 'kms:ScheduleKeyDeletion'
+              - 'kms:CancelKeyDeletion'
+            Resource: '*'
+          - Sid: Allow use of the key
+            Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::181191750685:user/AbhishekS'
+            Action:
+              - 'kms:DescribeKey'
+              - 'kms:Encrypt'
+              - 'kms:Decrypt'
+              - 'kms:ReEncrypt*'
+              - 'kms:GenerateDataKey'
+              - 'kms:GenerateDataKeyWithoutPlaintext'
+            Resource: '*'
+
+  #KMS key Alias
+  KMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/AbhishekS 
+      TargetKeyId: !Ref GroupA11KMS
+  
+          
+          
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  
