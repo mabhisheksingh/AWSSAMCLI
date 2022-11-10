@@ -4,7 +4,24 @@ Description: >
   AbhishekS_SAM1
 
   Sample SAM Template for AbhishekS_SAM1
-  
+
+
+#Static parameters 
+Parameters:
+  LambdaName:
+    Type: String
+    Description: 'This is common values'
+    Default: 'CPE-FIVE-DEV-'
+  LayerName:
+    Type: String
+    Description: 'this is common values'
+    Default: 'CPE-FIVE-DEV-UTILS-'
+  APIKEYNAME:
+    Type: String
+    Description: "This is Default Apikey"
+    Default: 'AbhishekSAMGateway'
+
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -29,6 +46,61 @@ Globals:
 
 Resources:
 
+  #API gateway if you not create this then default api gateway created by sam cli if you have event in function "REST" "protocol :  EDGE"
+  #make new API gateway
+  AbhishekSAMGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      ApiKeySourceType: 'HEADER'
+      Name: 'private'
+      Description: 'Test APIGateway'
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: true  # sets for all methods
+      EndpointConfiguration: 
+        Type: REGIONAL
+ 
+  #APIKey
+  APIKey:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn: [UsagePlan]
+    Properties:
+      Description: 'This is api-key for authentication'
+      Enabled: true
+      Name: !Ref APIKEYNAME
+      StageKeys:
+        - RestApiId: !Ref AbhishekSAMGateway
+          StageName: Prod
+
+  #API key usage plan
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan 
+    DependsOn: [AbhishekSAMGatewayProdStage]
+    Properties:
+      ApiStages:
+        - ApiId: !Ref AbhishekSAMGateway
+          Stage: Prod
+      Description: AbhishekS usage plan
+      Quota:
+        Limit: 5000
+        Period: MONTH
+      Throttle:
+        BurstLimit: 200
+        RateLimit: 100
+      UsagePlanName: AbhishekS_CPE5
+
+
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    DependsOn: [AbhishekSAMGateway]
+    Properties:
+      KeyId: !Ref APIKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref UsagePlan
+
+    
+
+
   #GetLambda
   GetLambdaFunctions:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -36,14 +108,17 @@ Resources:
       CodeUri: Lambdas/GetLambda
       Handler: getData.lambdaHandler
       Description : "This is get details lambda function of GroupA111"
-      FunctionName: "AbhishekS_GetDetail"
+      FunctionName: 'AbhishekS_GetDetail'
       Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
       Events:
-        HelloWorld:
+        APIKey:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
+            Auth:
+              ApiKeyRequired: true
             Path: /hello
             Method: get
+            RestApiId: !Ref AbhishekSAMGateway
 
   PostLambdaFunctions:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -54,9 +129,11 @@ Resources:
       FunctionName: "AbhishekS_PostDetails"
       Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
       Events:
-        HelloWorld:
+        APIKey:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
+            RestApiId: 
+              Ref: AbhishekSAMGateway
             Path: /hello
             Method: post
 
@@ -68,8 +145,7 @@ Resources:
       Description: This is common code for Group A111 project
       ContentUri: dependency
       CompatibleRuntimes:
-              - nodejs6.10
-              - nodejs8.10
+              - nodejs16.x
       LicenseInfo: 'MIT'
       RetentionPolicy: Retain
 
@@ -85,17 +161,22 @@ Resources:
           Value: "AbhishekS"
         - Key: "Group"
           Value: "A111"
-      Subscription:
-        - Endpoint: "abhishek.r.singh@impetus.com"
-          Protocol: "Email"
-
+      # Subscription:
+      #   - Endpoint: "abhishek.r.singh@impetus.com"
+      #     Protocol: "Email" 
         
           
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
+
+  AbhishekSAMGateway:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  
+  # APIKEYDetails:
+  #   Description: "API Key details"
+  #   Value: !GetAtt APIKey.Value
+
   

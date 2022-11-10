@@ -1,34 +1,24 @@
-const { testUtils , sendNotification } = require("/opt/nodejs/index");
-const { testMySQLConnectivity } = require("/opt/nodejs/mysqlUtils");
+const { sendNotification } = require("/opt/nodejs/index");
+const { getAllEmpData } = require("/opt/nodejs/mysqlUtils");
 let response;
 
-
-
 exports.lambdaHandler =  (event, context, callback) => {
-    try {
+    try {  
+    console.log("Query : ");
+    getAllEmpData().then( d =>  {
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
                 message: 'Get hello world mysql',
-                data : testUtils("Abhishek")
+                data : d
             })
         }
-        let message={
-            Name:"Abhishek",
-            Age: 26
-        }
-        sendNotification( {event,message} );
-
+        callback(null , response)
+        
+    } ).catch(err =>  callback(null , err));
     } catch (err) {
         console.log(err);
        // return err;
         callback(null , err);
     }
-    testMySQLConnectivity();
-   // setTimeout(()=>{
-        //return response
-    //},3000);
-    callback(null , response);
-    
 };
-

@@ -10,6 +10,8 @@ capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
 confirm_changeset = true
+profile = "CPE5"
+parameter_overrides = "LambdaName=\"CPE-FIVE-DEV-\" LayerName=\"CPE-FIVE-DEV-UTILS-\" APIKEYNAME=\"AbhishekSAMGateway\""
 
 [default]
 [default.deploy]
@@ -22,3 +24,5 @@ confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
+profile = "CPE5"
+parameter_overrides = "LambdaName=\"CPE-FIVE-DEV-\" LayerName=\"CPE-FIVE-DEV-UTILS-\" APIKEYNAME=\"AbhishekSAMGateway\""

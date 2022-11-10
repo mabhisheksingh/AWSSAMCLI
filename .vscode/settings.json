@@ -3,6 +3,8 @@
         "aws:/c%3A/Users/abhishek.r.singh/AppData/Roaming/Code/User/globalStorage/amazonwebservices.aws-toolkit-vscode/sam.schema.json": "file:///c%3A/Users/abhishek.r.singh/OneDrive%20-%20Impetus/Personal/CPE-5/Project/AbhishekS_SAM1/template.yaml"
     },
     "cSpell.words": [
+        "Abhishek",
+        "APIKEYNAME",
         "Runtimes"
     ],
     "sqltools.connections": [
@@ -19,5 +21,25 @@
             "username": "admin",
             "password": "8s1MZaJdmPpmL4KjO3Fa"
         }
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#ffc387",
+        "activityBar.background": "#ffc387",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#009f50",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#15202b99",
+        "sash.hoverBorder": "#ffc387",
+        "statusBar.background": "#ffa954",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#ff8f21",
+        "statusBarItem.remoteBackground": "#ffa954",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#ffa954",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#ffa95499",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "FFA954"
 }

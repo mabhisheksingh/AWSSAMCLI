@@ -5,6 +5,19 @@ Description: 'AbhishekS_SAM1
   Sample SAM Template for AbhishekS_SAM1
 
   '
+Parameters:
+  LambdaName:
+    Type: String
+    Description: This is common values
+    Default: CPE-FIVE-DEV-
+  LayerName:
+    Type: String
+    Description: this is common values
+    Default: CPE-FIVE-DEV-UTILS-
+  APIKEYNAME:
+    Type: String
+    Description: This is Default Apikey
+    Default: AbhishekSAMGateway
 Globals:
   Function:
     Timeout: 70
@@ -20,6 +33,57 @@ Globals:
   Api:
     TracingEnabled: true
 Resources:
+  AbhishekSAMGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      ApiKeySourceType: HEADER
+      Name: private
+      Description: Test APIGateway
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: true
+      EndpointConfiguration:
+        Type: REGIONAL
+  APIKey:
+    Type: AWS::ApiGateway::ApiKey
+    DependsOn:
+    - UsagePlan
+    Properties:
+      Description: This is api-key for authentication
+      Enabled: true
+      Name:
+        Ref: APIKEYNAME
+      StageKeys:
+      - RestApiId:
+          Ref: AbhishekSAMGateway
+        StageName: Prod
+  UsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    DependsOn:
+    - AbhishekSAMGatewayProdStage
+    Properties:
+      ApiStages:
+      - ApiId:
+          Ref: AbhishekSAMGateway
+        Stage: Prod
+      Description: AbhishekS usage plan
+      Quota:
+        Limit: 5000
+        Period: MONTH
+      Throttle:
+        BurstLimit: 200
+        RateLimit: 100
+      UsagePlanName: AbhishekS_CPE5
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    DependsOn:
+    - AbhishekSAMGateway
+    Properties:
+      KeyId:
+        Ref: APIKey
+      KeyType: API_KEY
+      UsagePlanId:
+        Ref: UsagePlan
   GetLambdaFunctions:
     Type: AWS::Serverless::Function
     Properties:
@@ -29,11 +93,15 @@ Resources:
       FunctionName: AbhishekS_GetDetail
       Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
       Events:
-        HelloWorld:
+        APIKey:
           Type: Api
           Properties:
+            Auth:
+              ApiKeyRequired: true
             Path: /hello
             Method: get
+            RestApiId:
+              Ref: AbhishekSAMGateway
     Metadata:
       SamResourceId: GetLambdaFunctions
   PostLambdaFunctions:
@@ -45,9 +113,11 @@ Resources:
       FunctionName: AbhishekS_PostDetails
       Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
       Events:
-        HelloWorld:
+        APIKey:
           Type: Api
           Properties:
+            RestApiId:
+              Ref: AbhishekSAMGateway
             Path: /hello
             Method: post
     Metadata:
@@ -59,8 +129,7 @@ Resources:
       Description: This is common code for Group A111 project
       ContentUri: ..\..\dependency
       CompatibleRuntimes:
-      - nodejs6.10
-      - nodejs8.10
+      - nodejs16.x
       LicenseInfo: MIT
       RetentionPolicy: Retain
   GroupA111SNSTopic:
@@ -74,11 +143,8 @@ Resources:
         Value: AbhishekS
       - Key: Group
         Value: A111
-      Subscription:
-      - Endpoint: abhishek.r.singh@impetus.com
-        Protocol: Email
 Outputs:
-  HelloWorldApi:
+  AbhishekSAMGateway:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+      Fn::Sub: https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
