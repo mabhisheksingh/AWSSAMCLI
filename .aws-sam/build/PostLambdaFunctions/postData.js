@@ -1,23 +1,31 @@
-
-const { testUtils } = require("/opt/nodejs/index")
 let response;
-
+const { createEmpData } = require("/opt/nodejs/mysqlUtils");
 exports.lambdaHandler =  (event, context, callback) => {
+    const data  = JSON.parse(event.body);
     try {
-        // const ret = await axios(url);
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'Post hello world',
-                data : testUtils("Abhishek")
-                // location: ret.data.trim()
-            })
-        }
+        createEmpData( data   ).then( primaryKey =>  {
+            response = {
+                'statusCode': 200,
+                'body': JSON.stringify({
+                    message: 'Data inserted Successfully',
+                    primaryKey : primaryKey
+                })
+            }
+            callback(null , response)
+        
+        } ).catch( err => {
+                // console.error(err);
+                response = {
+                'statusCode': 409 ,
+                'body': JSON.stringify({
+                    message: err.sqlMessage,
+                    errorCode : err.code
+                })
+            }
+                callback(null , response)
+            });
     } catch (err) {
-        console.log(err);
-        // return err;
+        console.error(err);
         callback(null, err);
     }
-    // return response
-    callback(null, response);
 };

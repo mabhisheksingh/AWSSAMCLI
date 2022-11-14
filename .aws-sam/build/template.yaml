@@ -6,18 +6,14 @@ Description: 'AbhishekS_SAM1
 
   '
 Parameters:
-  LambdaName:
-    Type: String
-    Description: This is common values
-    Default: CPE-FIVE-DEV-
-  LayerName:
-    Type: String
-    Description: this is common values
-    Default: CPE-FIVE-DEV-UTILS-
   APIKEYNAME:
     Type: String
-    Description: This is Default Apikey
+    Description: This is Default Api key
     Default: AbhishekSAMGateway
+  IAMRole:
+    Type: String
+    Description: This is my personal AWS account  IAM Role
+    Default: arn:aws:iam::163483727376:role/AbhishekSIAMRole
 Globals:
   Function:
     Timeout: 70
@@ -91,7 +87,8 @@ Resources:
       Handler: getData.lambdaHandler
       Description: This is get details lambda function of GroupA111
       FunctionName: AbhishekS_GetDetail
-      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Role:
+        Ref: IAMRole
       Events:
         APIKey:
           Type: Api
@@ -111,7 +108,8 @@ Resources:
       Handler: postData.lambdaHandler
       Description: This is Post details lambda function of GroupA111
       FunctionName: AbhishekS_PostDetails
-      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Role:
+        Ref: IAMRole
       Events:
         APIKey:
           Type: Api
@@ -122,6 +120,63 @@ Resources:
             Method: post
     Metadata:
       SamResourceId: PostLambdaFunctions
+  DeleteLambdaFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: DeleteLambdaFunctions
+      Handler: deleteData.lambdaHandler
+      Description: This is Post details lambda function of GroupA111
+      FunctionName: AbhishekS_DeleteData
+      Role:
+        Ref: IAMRole
+      Events:
+        APIKey:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: AbhishekSAMGateway
+            Path: /{empId}
+            Method: delete
+    Metadata:
+      SamResourceId: DeleteLambdaFunctions
+  UpdateLambdaFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UpdateLambdaFunctions
+      Handler: updateData.lambdaHandler
+      Description: This is Post details lambda function of GroupA111
+      FunctionName: AbhishekS_UpdateData
+      Role:
+        Ref: IAMRole
+      Events:
+        APIKey:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: AbhishekSAMGateway
+            Path: /emp/{empId}
+            Method: patch
+    Metadata:
+      SamResourceId: UpdateLambdaFunctions
+  getEmpByIdLambdaFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: getEmpByIdLambdaFunctions
+      Handler: getEmpByID.lambdaHandler
+      Description: This is Post details lambda function of GroupA111
+      FunctionName: AbhishekS_GetEmpDataByID
+      Role:
+        Ref: IAMRole
+      Events:
+        APIKey:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: AbhishekSAMGateway
+            Path: /emp/{empId}
+            Method: get
+    Metadata:
+      SamResourceId: getEmpByIdLambdaFunctions
   UtilsLibrary:
     Type: AWS::Serverless::LayerVersion
     Properties:

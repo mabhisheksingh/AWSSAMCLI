@@ -5,21 +5,17 @@ Description: >
 
   Sample SAM Template for AbhishekS_SAM1
 
-
 #Static parameters 
 Parameters:
-  LambdaName:
-    Type: String
-    Description: 'This is common values'
-    Default: 'CPE-FIVE-DEV-'
-  LayerName:
-    Type: String
-    Description: 'this is common values'
-    Default: 'CPE-FIVE-DEV-UTILS-'
   APIKEYNAME:
     Type: String
-    Description: "This is Default Apikey"
+    Description: "This is Default Api key"
     Default: 'AbhishekSAMGateway'
+  IAMRole:
+    Type: String
+    Description: "This is my personal AWS account  IAM Role"
+    Default: arn:aws:iam::163483727376:role/AbhishekSIAMRole
+
 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -89,7 +85,6 @@ Resources:
         RateLimit: 100
       UsagePlanName: AbhishekS_CPE5
 
-
   UsagePlanKey:
     Type: AWS::ApiGateway::UsagePlanKey
     DependsOn: [AbhishekSAMGateway]
@@ -97,9 +92,6 @@ Resources:
       KeyId: !Ref APIKey
       KeyType: API_KEY
       UsagePlanId: !Ref UsagePlan
-
-    
-
 
   #GetLambda
   GetLambdaFunctions:
@@ -109,7 +101,7 @@ Resources:
       Handler: getData.lambdaHandler
       Description : "This is get details lambda function of GroupA111"
       FunctionName: 'AbhishekS_GetDetail'
-      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Role: !Ref IAMRole
       Events:
         APIKey:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -127,15 +119,62 @@ Resources:
       Handler: postData.lambdaHandler
       Description : "This is Post details lambda function of GroupA111"
       FunctionName: "AbhishekS_PostDetails"
-      Role: arn:aws:iam::181191750685:role/AbhishekSIAMRole
+      Role: !Ref IAMRole
       Events:
         APIKey:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            RestApiId: 
-              Ref: AbhishekSAMGateway
+            RestApiId: !Ref AbhishekSAMGateway
             Path: /hello
             Method: post
+  
+  DeleteLambdaFunctions:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Lambdas/DeleteLambda
+      Handler: deleteData.lambdaHandler
+      Description : "This is Post details lambda function of GroupA111"
+      FunctionName: "AbhishekS_DeleteData"
+      Role: !Ref IAMRole
+      Events:
+        APIKey:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref AbhishekSAMGateway
+            Path: /{empId}
+            Method: delete
+  
+  UpdateLambdaFunctions:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Lambdas/UpdateLambda
+      Handler: updateData.lambdaHandler
+      Description : "This is Post details lambda function of GroupA111"
+      FunctionName: "AbhishekS_UpdateData"
+      Role: !Ref IAMRole
+      Events:
+        APIKey:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref AbhishekSAMGateway
+            Path: /emp/{empId}
+            Method: patch
+  
+  getEmpByIdLambdaFunctions:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: Lambdas/GetEmpByID
+      Handler: getEmpByID.lambdaHandler
+      Description : "This is Post details lambda function of GroupA111"
+      FunctionName: "AbhishekS_GetEmpDataByID"
+      Role: !Ref IAMRole
+      Events:
+        APIKey:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref AbhishekSAMGateway
+            Path: /emp/{empId}
+            Method: get
 
   #Lambda layer for common code
   UtilsLibrary:
@@ -174,9 +213,5 @@ Outputs:
   AbhishekSAMGateway:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  
-  # APIKEYDetails:
-  #   Description: "API Key details"
-  #   Value: !GetAtt APIKey.Value
 
   

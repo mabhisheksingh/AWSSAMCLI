@@ -19,4 +19,31 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["PostLambdaFunctions"]
 
+[function_build_definitions.1924b1e3-211b-4a00-bd52-e1c6ae668ede]
+codeuri = "D:\\Code\\Node\\MySAMCLIProject\\Lambdas\\DeleteLambda"
+runtime = "nodejs16.x"
+architecture = "x86_64"
+handler = "postData.lambdaHandler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["DeleteLambdaFunctions"]
+
+[function_build_definitions.5a5bba9a-967a-43c4-ae2e-cd0f84f3c6a2]
+codeuri = "D:\\Code\\Node\\MySAMCLIProject\\Lambdas\\UpdateLambda"
+runtime = "nodejs16.x"
+architecture = "x86_64"
+handler = "postData.lambdaHandler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["UpdateLambdaFunctions"]
+
+[function_build_definitions.b2d5dbc0-3a5e-4e2b-abd4-dd31977e12bb]
+codeuri = "D:\\Code\\Node\\MySAMCLIProject\\Lambdas\\GetEmpByID"
+runtime = "nodejs16.x"
+architecture = "x86_64"
+handler = "getEmpByID.lambdaHandler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["getEmpByIdLambdaFunctions"]
+
 [layer_build_definitions]

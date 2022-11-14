@@ -2,13 +2,13 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "AbhishekS1"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-szwczjsh2uck"
-s3_prefix = "AbhishekS1"
+stack_name = "Abhishek"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-tvnhlu1vgkw5"
+s3_prefix = "Abhishek"
 region = "ap-south-1"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
 confirm_changeset = true
 disable_rollback = true
-profile = "CPE5"
-parameter_overrides = "LambdaName=\"CPE-FIVE-DEV-\" LayerName=\"CPE-FIVE-DEV-UTILS-\" APIKEYNAME=\"AbhishekSAMGateway\""
+profile = "default"
+parameter_overrides = "APIKEYNAME=\"AbhishekSAMGateway\" IAMRole=\"arn:aws:iam::163483727376:role/AbhishekSIAMRole\""
