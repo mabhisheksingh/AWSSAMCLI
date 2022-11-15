@@ -80,13 +80,13 @@ Resources:
       KeyType: API_KEY
       UsagePlanId:
         Ref: UsagePlan
-  GetLambdaFunctions:
+  GetAllEmpDataFunctions:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: GetLambdaFunctions
+      CodeUri: GetAllEmpDataFunctions
       Handler: getData.lambdaHandler
       Description: This is get details lambda function of GroupA111
-      FunctionName: AbhishekS_GetDetail
+      FunctionName: AbhishekS_GetDetails
       Role:
         Ref: IAMRole
       Events:
@@ -95,12 +95,12 @@ Resources:
           Properties:
             Auth:
               ApiKeyRequired: true
-            Path: /hello
+            Path: /getEmpDetails
             Method: get
             RestApiId:
               Ref: AbhishekSAMGateway
     Metadata:
-      SamResourceId: GetLambdaFunctions
+      SamResourceId: GetAllEmpDataFunctions
   PostLambdaFunctions:
     Type: AWS::Serverless::Function
     Properties:
@@ -116,7 +116,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: AbhishekSAMGateway
-            Path: /hello
+            Path: /createNewEmp
             Method: post
     Metadata:
       SamResourceId: PostLambdaFunctions
@@ -135,7 +135,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: AbhishekSAMGateway
-            Path: /{empId}
+            Path: /delete/{empId}
             Method: delete
     Metadata:
       SamResourceId: DeleteLambdaFunctions
@@ -154,7 +154,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: AbhishekSAMGateway
-            Path: /emp/{empId}
+            Path: /modifyEmp/{empId}
             Method: patch
     Metadata:
       SamResourceId: UpdateLambdaFunctions
@@ -202,4 +202,4 @@ Outputs:
   AbhishekSAMGateway:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
-      Fn::Sub: https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+      Fn::Sub: https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/getEmpDetails/

@@ -94,13 +94,13 @@ Resources:
       UsagePlanId: !Ref UsagePlan
 
   #GetLambda
-  GetLambdaFunctions:
+  GetAllEmpDataFunctions:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: Lambdas/GetLambda
       Handler: getData.lambdaHandler
       Description : "This is get details lambda function of GroupA111"
-      FunctionName: 'AbhishekS_GetDetail'
+      FunctionName: 'AbhishekS_GetDetails'
       Role: !Ref IAMRole
       Events:
         APIKey:
@@ -108,7 +108,7 @@ Resources:
           Properties:
             Auth:
               ApiKeyRequired: true
-            Path: /hello
+            Path: /getEmpDetails
             Method: get
             RestApiId: !Ref AbhishekSAMGateway
 
@@ -125,7 +125,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref AbhishekSAMGateway
-            Path: /hello
+            Path: /createNewEmp
             Method: post
   
   DeleteLambdaFunctions:
@@ -141,7 +141,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref AbhishekSAMGateway
-            Path: /{empId}
+            Path: /delete/{empId}
             Method: delete
   
   UpdateLambdaFunctions:
@@ -157,7 +157,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref AbhishekSAMGateway
-            Path: /emp/{empId}
+            Path: /modifyEmp/{empId}
             Method: patch
   
   getEmpByIdLambdaFunctions:
@@ -212,6 +212,6 @@ Outputs:
 
   AbhishekSAMGateway:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${AbhishekSAMGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/getEmpDetails/"
 
   
